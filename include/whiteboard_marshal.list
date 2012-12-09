@@ -1,0 +1,70 @@
+#
+# WhiteBoard lig
+#
+# WhiteBoard_marshal.list
+#
+# Copyright 2007 Nokia Corporation
+#
+
+# These are the WhiteBoard GObject signal marshallers. GLib always puts the
+# sending object as the first parameter and a userdata pointer as the last
+# parameter. So these two should never be mentioned in these definitions.
+#
+# The format of the file is very simple: The first word before the colon
+# tells the return value type, which is VOID for most of the marshallers.
+# Words that come after the colon describe the function parameter types,
+# each separated with a comma.
+
+
+# Most control channel signals
+VOID: VOID
+
+# Healthcheck
+#VOID: VOID
+
+# Generic single pointer
+VOID: POINTER
+
+# Set position, Set XID, browse complete
+#VOID: INT
+
+# JOIN (WhiteBoardSIBAccessHandle, accessid, username, nodeid, udn, msgnumber)
+#apr09obsolete removing username VOID: POINTER, INT, STRING, STRING, STRING, INT
+VOID: POINTER, INT, STRING, STRING, INT
+
+# JOIN COMPLETE (success)
+VOID: INT
+
+# UNSUBSCRIBE COMPLETE (status, access_id)
+VOID: INT, INT
+
+# LEAVE (WhiteBoardSIBAccessHandle,  nodeid, udn, msgnumber)
+VOID: POINTER, STRING, STRING, INT
+
+# REMOVE REQUEST (WhiteBoardSIBAccessHandle,  nodeid, udn, msgnumber,, request)
+#VOID: POINTER, STRING, STRING, INT, STRING
+
+# INSERT and REMOVE REQUESTs (WhiteBoardSIBAccessHandle,  nodeid, udn, msgnumber, encoding, request)
+VOID: POINTER, STRING, STRING, INT, INT, STRING
+
+# UPDATE REQUEST (WhiteBoardSIBAccessHandle,  nodeid, udn, msgnumber, encoding, insert_request, remove_request)
+VOID: POINTER, STRING, STRING, INT, INT, STRING, STRING
+
+# QUERY/SUBSCRIBE REQUEST (WhiteBoardSIBAccessHandle, accessid, nodeid, udn, msgnumber, type, request)
+VOID: POINTER, INT, STRING, STRING, INT, INT, STRING
+
+# UNSUBSCRIBE REQUEST (WhiteBoardSIBAccessHandle, accessid, nodeid, udn, msgnumber, request)
+VOID: POINTER, INT, STRING, STRING, INT, STRING
+
+
+##############################################################################
+# WhiteBoard NODE GObject signal marshallers
+##############################################################################
+
+# SIB (uuid,name)
+# SIB inserted (uuid,name)
+# SIB removed (uuid,name)
+VOID: STRING,STRING
+
+# Log message (level,id,message)
+VOID: INT,INT,STRING

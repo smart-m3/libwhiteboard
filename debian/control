@@ -1,0 +1,19 @@
+Source: libwhiteboard
+Priority: optional
+Section: user/libs
+Maintainer: Hannu Laine <hannu.e.laine@nokia.com>
+Build-Depends: debhelper (>= 4.0.0), uuid-dev, libexpat1-dev
+Standards-Version: 3.6.0
+
+Package: libwhiteboard-dev
+Architecture: any
+Section: devel
+Depends: libwhiteboard
+Description: WhiteBoard development packege
+
+Package: libwhiteboard
+Architecture: any
+Section: user/libs
+Depends: libuuid1, libexpat1
+Description: WhiteBoard helper library for C development.
+

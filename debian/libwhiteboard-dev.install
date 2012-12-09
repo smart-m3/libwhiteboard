@@ -1,0 +1,5 @@
+usr/include/whiteboard/*.h
+usr/lib/pkgconfig/*
+usr/lib/*.la
+usr/lib/*.a
+usr/share/doc/libwhiteboard-dev/*

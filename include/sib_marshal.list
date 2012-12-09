@@ -1,0 +1,44 @@
+#
+# SIB lib
+#
+# sib_marshal.list
+#
+# Copyright 2007 Nokia Corporation
+#
+
+# These are the SIBObject GObject signal marshallers. GLib always puts the
+# sending object as the first parameter and a userdata pointer as the last
+# parameter. So these two should never be mentioned in these definitions.
+#
+# The format of the file is very simple: The first word before the colon
+# tells the return value type, which is VOID for most of the marshallers.
+# Words that come after the colon describe the function parameter types,
+# each separated with a comma.
+
+# Most control channel signals
+VOID: VOID
+
+# Healthcheck
+VOID: VOID
+
+# Generic single pointer
+VOID: POINTER
+
+# Log message (level,id,message)
+VOID: INT,INT,STRING
+
+
+# REGISTER_SIB (SibObjectHandle, URI)
+VOID: POINTER, STRING
+
+# LEAVE CNF, REMOVE CNF (spaceid, nodeid, msgnum, success)
+VOID: STRING, STRING, INT, INT
+
+# JOIN CNF, INSERT CNF, UPDATE CNF (spaceid, nodeid, msgnum, success, credentials/bNodes/results)
+VOID: STRING, STRING, INT, INT, STRING
+
+# SUBSCRIBE CNF (spaceid, nodeid, msgnum, success, subscription_id, results)
+VOID: STRING, STRING, INT, INT, STRING, STRING
+
+# SUBSCRIPTION IND (spaceid, nodeid, msgnum, seqnum, subscription_id, results_new, results_obsolete)
+VOID: STRING, STRING, INT, INT,  STRING, STRING, STRING

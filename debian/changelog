@@ -1,0 +1,51 @@
+libwhiteboard (2.3) karmic; urgency=low
+
+  * Another beta release.
+
+ -- Francesco Morandi <francescomorandi84@libero.it>  Thu, 01 Jan 2012 13:31:21 +0300
+
+libwhiteboard (2.0-beta1) karmic; urgency=low
+
+  * Another beta release.
+
+ -- Hannu Laine <hannlain@morpheus>  Thu, 08 Apr 2010 13:31:21 +0300
+
+libwhiteboard (2.0-beta0) karmic; urgency=low
+
+  * Still beta release.
+
+ -- Hannu Laine <hannu.e.laine@nokia.com>  Wed, 24 Feb 2010 13:05:01 +0200
+
+libwhiteboard (2.0pre1) karmic; urgency=low
+
+  * New release.
+
+ -- Hannu Laine <hannu.e.laine@nokia.com>  Fri, 16 Oct 2009 15:38:18 +0300
+
+libwhiteboard (2.0pre) unstable; urgency=low
+
+  * Prerelease of 2.0 version.
+
+ -- Hannu Laine <hannu.e.laine@nokia.com>  Wed,  6 May 2009 13:42:01 +0200
+
+libwhiteboard (1.1) unstable; urgency=low
+
+  * Updated to release 1.1.
+
+ -- Hannu Laine <hannu.e.laine@nokia.com>  Thu,  4 Dec 2008 15:17:01 +0200
+
+libwhiteboard (1.0) unstable; urgency=low
+
+  * First release.
+
+ -- Hannu Laine <hannu.e.laine@nokia.com>  Fri, 18 Jul 2008 12:40:35 +0300
+
+libwhiteboard (0.0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Hannu Laine <hannu.e.laine@nokia.com>  Thu,  1 Mar 2007 16:25:47 +0200
+
+Local variables:
+mode: debian-changelog
+End:
