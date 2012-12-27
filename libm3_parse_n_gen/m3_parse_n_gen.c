@@ -185,7 +185,7 @@ gchar *ssBufDesc_GetMessage(ssBufDesc_t *desc);
 gint ssBufDesc_GetMessageLen(ssBufDesc_t *desc);
 ssStatus_t parseM3_query_cnf_wql(GSList **results, const gchar * response);
 ssStatus_t parseM3_triples(GSList ** list_pp, const char * m3XML_triples_str, GHashTable *prefix_ns_map);
-ssStatus_t parseM3_query_results_sparql_select(GSList **selectedVariables, GSList **valRows, const gchar *resultXML, const GHashTable *prefix_ns_map);
+ssStatus_t parseM3_query_results_sparql_select(GSList **selectedVariables, GSList **valRows, const gchar *resultXML, /*const*/ GHashTable *prefix_ns_map);
 #endif
 /*-----------------------------------------------------------------------------*/
 typedef struct {
@@ -1082,6 +1082,7 @@ ssStatus_t addXML_open_element (ssBufDesc_t *bD, charStr *el)
 ssStatus_t generateSPARQLSelectQueryString(ssBufDesc_t *bD, GSList *selectVars, GSList *where, GSList *optionals, GHashTable *namespaces)
 {
   charStr _charstr;
+
   inline charStr *CHARSTR(char *str, int len)
     { _charstr.txt=str;
       _charstr.len=(len>0)? len: strlen(str);
@@ -1120,7 +1121,7 @@ ssStatus_t generateSPARQLSelectQueryString(ssBufDesc_t *bD, GSList *selectVars, 
       if (!pn || strlen((char *)pn->string) < 1 || pn->nodeType != ssElement_TYPE_BNODE)
 	return ss_InvalidParameter;
       status = addXML_append_str(bD, CHARSTR(" ?",2));
-      if (!status) status = addXML_append_str(bD, CHARSTR(pn->string,0));
+      if (!status) status = addXML_append_str(bD, CHARSTR((char*)pn->string,0));
     }
 
   if (!status) status = addXML_append_str(bD, CHARSTR("\n",1));
@@ -1151,29 +1152,29 @@ ssStatus_t generateSPARQLSelectQueryString(ssBufDesc_t *bD, GSList *selectVars, 
 	  if (pn->nodeType == ssElement_TYPE_BNODE)
 	    {
 	      status = addXML_append_str(bD, CHARSTR(" ?",2));
-	      if (!status) status = addXML_append_str(bD, CHARSTR(pn->string,0));
+	      if (!status) status = addXML_append_str(bD, CHARSTR((char*)pn->string,0));
 	    }
 	  else if (i==2 && pn->nodeType == ssElement_TYPE_LIT)
 	    {
 	      status = addXML_append_str(bD, CHARSTR(" \"",2));
-	      if (!status) status = addXML_append_str(bD, CHARSTR(pn->string,0));
+	      if (!status) status = addXML_append_str(bD, CHARSTR((char*)pn->string,0));
 	      if (!status) status = addXML_append_str(bD, CHARSTR("\"",1));
 	    }
 	  else if (pn->nodeType == ssElement_TYPE_URI)
 	    {
 	      gchar *namespace = NULL;
-	      gchar **prefix_p = g_strsplit (pn->string, ":", 2);
+	      gchar **prefix_p = g_strsplit((const gchar*)pn->string, ":", 2);
 	      if (*prefix_p)
 		namespace = g_hash_table_lookup (namespaces, *prefix_p);
 	      if (namespace)
 		{
 		  status = addXML_append_str(bD, CHARSTR(" ",1));
-		  if (!status) status = addXML_append_str(bD, CHARSTR(pn->string,0));
+		  if (!status) status = addXML_append_str(bD, CHARSTR((char*)pn->string,0));
 		}
 	      else
 		{
 		  status = addXML_append_str(bD, CHARSTR(" <",2));
-		  if (!status) status = addXML_append_str(bD, CHARSTR(pn->string,0));
+		  if (!status) status = addXML_append_str(bD, CHARSTR((char*)pn->string,0));
 		  if (!status) status = addXML_append_str(bD, CHARSTR(">",1));
 		}
 	    }
@@ -1217,29 +1218,29 @@ ssStatus_t generateSPARQLSelectQueryString(ssBufDesc_t *bD, GSList *selectVars, 
 	      if (pn->nodeType == ssElement_TYPE_BNODE)
 		{
 		  status = addXML_append_str(bD, CHARSTR(" ?",2));
-		  if (!status) status = addXML_append_str(bD, CHARSTR(pn->string,0));
+		  if (!status) status = addXML_append_str(bD, CHARSTR((char*)pn->string,0));
 		}
 	      else if (i==2 && pn->nodeType == ssElement_TYPE_LIT)
 		{
 		  status = addXML_append_str(bD, CHARSTR(" \"",2));
-		  if (!status) status = addXML_append_str(bD, CHARSTR(pn->string,0));
+		  if (!status) status = addXML_append_str(bD, CHARSTR((char*)pn->string,0));
 		  if (!status) status = addXML_append_str(bD, CHARSTR("\"",1));
 		}
 	      else if (pn->nodeType == ssElement_TYPE_URI)
 		{
 		  gchar *namespace = NULL;
-		  gchar **prefix_p = g_strsplit (pn->string, ":", 2);
+		  gchar **prefix_p = g_strsplit( (const gchar*) pn->string, ":", 2);
 		  if (*prefix_p)
 		    namespace = g_hash_table_lookup (namespaces, *prefix_p);
 		  if (namespace)
 		    {
 		      status = addXML_append_str(bD, CHARSTR(" ",1));
-		      if (!status) status = addXML_append_str(bD, CHARSTR(pn->string,0));
+		      if (!status) status = addXML_append_str(bD, CHARSTR((char*)pn->string,0));
 		    }
 		  else
 		    {
 		      status = addXML_append_str(bD, CHARSTR(" <",2));
-		      if (!status) status = addXML_append_str(bD, CHARSTR(pn->string,0));
+		      if (!status) status = addXML_append_str(bD, CHARSTR((char*)pn->string,0));
 		      if (!status) status = addXML_append_str(bD, CHARSTR(">",1));
 		    }
 		}
@@ -1348,7 +1349,7 @@ queryWQLCnfHandler (void *data, const char *s, int sLen)
       whiteboard_log_debug("Appending to existing blk->pp\n");
       ssPathNode_t *pN = blk->pp;
       gchar *new = g_strndup(s,sLen);
-      gchar *old =  pN->string;
+      gchar *old =  (gchar *) pN->string;
       pN->string = (guchar *)g_strconcat( old, new, NULL);
       g_free(old);
       g_free(new);
@@ -1402,7 +1403,7 @@ queryWQLReqHandler (void *data, const char *s, int sLen)
 	  ssPathNode_t *pN = (ssPathNode_t *)(blk->pp);
 	  guchar *old = pN->string;
 	  gchar *new = g_strndup(s,sLen);
-	  pN->string = (guchar *) g_strconcat( old, new, NULL);
+	  pN->string = (guchar *) g_strconcat((const gchar *)old, new, NULL);
 	  g_free(old);
 	  g_free(new);
 	  whiteboard_log_debug("After append: %s\n", (gchar *)(pN->string));
@@ -1602,7 +1603,7 @@ queryWQLStart (void *data, const char *el, const char **attr)
 	      if (0==strcmp(ppName, SIB_PATH_NODE_START.txt))
 		{
 		  blk->qD->wqlType.related.startNode= g_new0(ssPathNode_t,1 );
-		  blk->qD->wqlType.related.startNode->string = g_strdup("");
+		  blk->qD->wqlType.related.startNode->string = (ssElement_t) g_strdup("");
 		   blk->qD->wqlType.related.startNode->nodeType = 
 		     (blk->inLiteral ?  ssElement_TYPE_LIT:ssElement_TYPE_URI);
 		  blk->pp = blk->qD->wqlType.related.startNode;
@@ -1610,7 +1611,7 @@ queryWQLStart (void *data, const char *el, const char **attr)
 	      else if (0==strcmp(ppName, SIB_PATH_NODE_END.txt))
 		{
 		  blk->qD->wqlType.related.endNode= g_new0(ssPathNode_t,1 );
-		  blk->qD->wqlType.related.endNode->string = g_strdup("");
+		  blk->qD->wqlType.related.endNode->string = (ssElement_t) g_strdup("");
 		  blk->qD->wqlType.related.endNode->nodeType = 
 		     (blk->inLiteral ?  ssElement_TYPE_LIT:ssElement_TYPE_URI);
 		  blk->pp = blk->qD->wqlType.related.endNode;
@@ -1628,7 +1629,7 @@ queryWQLStart (void *data, const char *el, const char **attr)
 	      if (!ppName)
 		{
 		  blk->qD->wqlType.isType.node = g_new0(ssPathNode_t,1 );
-		  blk->qD->wqlType.isType.node->string = g_strdup("");
+		  blk->qD->wqlType.isType.node->string = (ssElement_t) g_strdup("");
 		  blk->qD->wqlType.isType.node->nodeType = 
 		     (blk->inLiteral ?  ssElement_TYPE_LIT:ssElement_TYPE_URI);
 		  blk->pp = blk->qD->wqlType.isType.node;
@@ -1636,7 +1637,7 @@ queryWQLStart (void *data, const char *el, const char **attr)
 	      else if (0==strcmp(ppName, SIB_TYPE.txt))
 		{
 		  blk->qD->wqlType.isType.typeNode = g_new0(ssPathNode_t,1 );
-		  blk->qD->wqlType.isType.typeNode->string = g_strdup("");
+		  blk->qD->wqlType.isType.typeNode->string = (ssElement_t) g_strdup("");
 		  blk->qD->wqlType.isType.typeNode->nodeType = 
 		     (blk->inLiteral ?  ssElement_TYPE_LIT:ssElement_TYPE_URI);
 		  blk->pp = blk->qD->wqlType.isType.typeNode;
@@ -1654,7 +1655,7 @@ queryWQLStart (void *data, const char *el, const char **attr)
 	      if (0==strcmp(ppName, SIB_PATH_NODE_SUPERTYPE.txt))
 		{
 		  blk->qD->wqlType.isSubType.superTypeNode = g_new0(ssPathNode_t,1 );
-		  blk->qD->wqlType.isSubType.superTypeNode->string = g_strdup("");
+		  blk->qD->wqlType.isSubType.superTypeNode->string = (ssElement_t) g_strdup("");
 		  blk->qD->wqlType.isSubType.superTypeNode->nodeType = 
 		     (blk->inLiteral ?  ssElement_TYPE_LIT:ssElement_TYPE_URI);
 		  blk->pp = blk->qD->wqlType.isSubType.superTypeNode;
@@ -1662,7 +1663,7 @@ queryWQLStart (void *data, const char *el, const char **attr)
 	      else if (0==strcmp(ppName, SIB_PATH_NODE_SUBTYPE.txt))
 		{
 		  blk->qD->wqlType.isSubType.subTypeNode = g_new0(ssPathNode_t,1 );
-		  blk->qD->wqlType.isSubType.subTypeNode->string = g_strdup("");
+		  blk->qD->wqlType.isSubType.subTypeNode->string = (ssElement_t) g_strdup("");
 		   blk->qD->wqlType.isSubType.subTypeNode->nodeType = 
 		     (blk->inLiteral ?  ssElement_TYPE_LIT:ssElement_TYPE_URI);
 		   blk->pp = blk->qD->wqlType.isSubType.subTypeNode;
@@ -1725,17 +1726,19 @@ queryWQLEnd (void *data, const char *el)
 #ifdef SIBUSER_ROLE
       if( blk->inUri && blk->pp && (0 == strcmp(el, SIB_URI.txt)))
 	{
-	  ssPathNode_t *t = blk->pp;
-	  whiteboard_log_debug("Prepending URI (%s) to result set\n", t->string);
+ 	  // SMART--11
+	  //ssPathNode_t *t = blk->pp;
+	  whiteboard_log_debug("Prepending URI (%s) to result set\n", blk->pp);
 	  blk->inUri = FALSE;
 	  *(blk->results) = g_slist_prepend(*(blk->results), (blk->pp));
 	  blk->pp = NULL;
 	}
       else if(blk->inLiteral && blk->pp && (0 == strcmp(el, SIB_LITERAL.txt)))
 	{
-	  ssPathNode_t *t = blk->pp;
+	  // SMART--11
+	  //ssPathNode_t *t = blk->pp;
 	  blk->inLiteral = FALSE;
-	  whiteboard_log_debug("Prepending literal (%s) to result set\n", t->string);
+	  whiteboard_log_debug("Prepending literal (%s) to result set\n", blk->pp);
 	  *(blk->results) = g_slist_prepend(*(blk->results), (blk->pp));
 	  blk->pp = NULL;
 	}
@@ -1782,7 +1785,7 @@ queryWQLEnd (void *data, const char *el)
 }
 
 static
-inline gint str_list_findByIndex (GSList *lst, gchar *str)
+inline gint str_list_findByIndex (GSList *lst, /*gchar*/const char *str)
 {
   GSList *l;
   gint i;
@@ -1792,6 +1795,7 @@ inline gint str_list_findByIndex (GSList *lst, gchar *str)
   return -1;
 }
 
+// SMART-11
 static void XMLCALL
 elementSPARQLSelect_start (void *data, const char *el, const char **attr)
 {
@@ -1800,117 +1804,126 @@ elementSPARQLSelect_start (void *data, const char *el, const char **attr)
   whiteboard_log_debug("parsing SPARQL Select results: element start: %s\n",el);
 
   if (!blk->inBindingsList)
+  {
     if( strcmp(el, "sparql_results")==0 )
-      {
+    {
 	blk->inBindingsList = TRUE;
 	return;
-      }
+    }
     else
-      {
+    {
 	whiteboard_log_debug("Parsed message must start with element sparql_bindings_list, not with: %s", el);
 	parseM3_setQuitParse(&blk->c, ss_ParsingError);
 	return;
-      }
+    }
+  }
 
   if(!blk->doneVariableList)
+  {
+    if (!blk->inHead)
     {
-      if (!blk->inHead)
-	if( strcmp(el, "head")==0 )
-	  {
-	    blk->inHead = TRUE;
-	    return;
-	  }
-	else
-	  {
-	    whiteboard_log_debug("1st element within first (only) <sparql_results> must be <head>, not: ", el);
-	    parseM3_setQuitParse(&blk->c, ss_ParsingError);
-	    return;
-	  }
+      if( strcmp(el, "head")==0 )
+      {
+        blk->inHead = TRUE;
+	return;
+      }
+      else
+      {
+        whiteboard_log_debug("1st element within first (only) <sparql_results> must be <head>, not: ", el);
+	parseM3_setQuitParse(&blk->c, ss_ParsingError);
+	return;
+      }
 
       if( !blk->inVariable && strcmp(el,"variable")==0 && (attr[0]&&!attr[2]) && strcmp(attr[0],"name")==0 )
-	{
-	  blk->inVariable = TRUE;
-	  *blk->selectedVariables = g_slist_append (*blk->selectedVariables, g_strdup(attr[1]));
-	  return;
-	}
+      {
+        blk->inVariable = TRUE;
+	*blk->selectedVariables = g_slist_append (*blk->selectedVariables, g_strdup(attr[1]));
+	return;
+      }
       else
-	{
-	  if (blk->inVariable)
-	    whiteboard_log_debug("new element without closing previous <variable> element");
-	  else if (strcmp(el,"variable")!=0)
-	    whiteboard_log_debug("starting something other than <variable> element in <head> list");
-	  else if (!attr[0])
-	    whiteboard_log_debug("missing \"name\" attribute");
-	  else if (strcmp(attr[0],"name")!=0)
-	    whiteboard_log_debug("only \"name\" attribute allowed in <variable> element");
+      {
+        if (blk->inVariable)
+	  whiteboard_log_debug("new element without closing previous <variable> element");
+	else if (strcmp(el,"variable")!=0)
+	  whiteboard_log_debug("starting something other than <variable> element in <head> list");
+	else if (!attr[0])
+	  whiteboard_log_debug("missing \"name\" attribute");
+	else if (strcmp(attr[0],"name")!=0)
+	  whiteboard_log_debug("only \"name\" attribute allowed in <variable> element");
 	  parseM3_setQuitParse(&blk->c, ss_ParsingError);
 	  return;
-	}
+      }
     }
+  }
 
   if (!blk->inResults)
+  {
     if( strcmp(el,"results")==0 )
-      {
-	blk->inResults = TRUE;
-	return;
-      }
-    else
-      {
-	whiteboard_log_debug("expected element <results>, not : %s",el);
-	parseM3_setQuitParse(&blk->c, ss_ParsingError);
-	return;
-      }
-
-  if (!blk->inResult)
-    if( strcmp(el,"result")==0 )
-      { //initialize a new result row with NULLs; replaced if appropriate <binding..> is parsed.
-	GSList *list = NULL;
-	GSList *tmp = *blk->selectedVariables;
-	for ( ; tmp; tmp=tmp->next)
-	  list = g_slist_prepend(list,NULL);
-
-	*blk->results = g_slist_prepend(*blk->results, list);
-	blk->inResult = TRUE;
-	return;
-      }
-    else
-      {
-	whiteboard_log_debug("expected element <result>, not : %s",el);
-	parseM3_setQuitParse(&blk->c, ss_ParsingError);
-	return;
-      }
-
-  if (!blk->inBinding && strcmp(el,"binding")==0 && (attr[0]&&!attr[2]) &&
-      strcmp(attr[0],"name")==0 && (blk->valueIndex=str_list_findByIndex(*blk->selectedVariables,attr[1])) != -1)
     {
-      blk->inBinding = TRUE;
+      blk->inResults = TRUE;
       return;
     }
-  else
+    else
     {
-      if (blk->inBinding)
-	{
-	  if (blk->parsedCharTxt==NULL && ( strcmp(el,"uri")==0 || strcmp(el,"literal")==0 ))
-	    return;
-	  else if (blk->parsedCharTxt!=NULL)
-	    whiteboard_log_debug("%s",errorContentNotInBinding);
-	  else
-	    whiteboard_log_debug("new element withing <binding> which repeats or is not <uri> or <literal>");
-	  parseM3_setQuitParse(&blk->c, ss_ParsingError);
-	  return;
-	}
-      else if (strcmp(el,"binding")!=0) {
-	whiteboard_log_debug("starting <%s> when <binding> is expected after <result>",el);
-      }
-      else if (!attr[0])
-	whiteboard_log_debug("missing \"name\" attribute");
-      else if (strcmp(attr[0],"name")!=0)
-	whiteboard_log_debug("only \"name\" attribute allowed in <binding> element");
-      else
-	whiteboard_log_debug("attribute value is not a selected variable");
+      whiteboard_log_debug("expected element <results>, not : %s",el);
       parseM3_setQuitParse(&blk->c, ss_ParsingError);
       return;
     }
+  }
+
+  if (!blk->inResult)
+  {
+    if( strcmp(el,"result")==0 )
+    { //initialize a new result row with NULLs; replaced if appropriate <binding..> is parsed.
+      GSList *list = NULL;
+      GSList *tmp = *blk->selectedVariables;
+      for ( ; tmp; tmp=tmp->next)
+	list = g_slist_prepend(list,NULL);
+
+      *blk->results = g_slist_prepend(*blk->results, list);
+      blk->inResult = TRUE;
+      return;
+    }
+    else
+    {
+      whiteboard_log_debug("expected element <result>, not : %s",el);
+      parseM3_setQuitParse(&blk->c, ss_ParsingError);
+      return;
+    }
+  }
+
+  if (!blk->inBinding && strcmp(el,"binding")==0 && (attr[0]&&!attr[2]) &&
+      strcmp(attr[0],"name")==0 && (blk->valueIndex=str_list_findByIndex(*blk->selectedVariables,attr[1])) != -1)
+  {
+    blk->inBinding = TRUE;
+    return;
+  }
+  else
+  {
+    if (blk->inBinding)
+    {
+      if (blk->parsedCharTxt==NULL && ( strcmp(el,"uri")==0 || strcmp(el,"literal")==0 ))
+        return;
+      else if (blk->parsedCharTxt!=NULL)
+	whiteboard_log_debug("%s",errorContentNotInBinding);
+      else
+	whiteboard_log_debug("new element withing <binding> which repeats or is not <uri> or <literal>");
+	parseM3_setQuitParse(&blk->c, ss_ParsingError);
+	return;
+    }
+    else if (strcmp(el,"binding")!=0) 
+    {
+      whiteboard_log_debug("starting <%s> when <binding> is expected after <result>",el);
+    }
+    else if (!attr[0])
+      whiteboard_log_debug("missing \"name\" attribute");
+    else if (strcmp(attr[0],"name")!=0)
+      whiteboard_log_debug("only \"name\" attribute allowed in <binding> element");
+    else
+      whiteboard_log_debug("attribute value is not a selected variable");
+      parseM3_setQuitParse(&blk->c, ss_ParsingError);
+      return;
+  }
 
   //should have returned before this
   parseM3_setQuitParse(&blk->c, ss_InternalError);
@@ -1918,6 +1931,7 @@ elementSPARQLSelect_start (void *data, const char *el, const char **attr)
   whiteboard_log_debug_fe();
 }
 
+// SMART-11
 static void XMLCALL
 elementSPARQLSelect_end (void *data, const char *el)
 {
@@ -1926,109 +1940,111 @@ elementSPARQLSelect_end (void *data, const char *el)
   whiteboard_log_debug("parsing SPARQL Select results: reached element end: %s\n",el);
 
   if(blk->inBindingsList)
+  {
+    if(!blk->doneVariableList)
     {
-      if(!blk->doneVariableList)
-	{
-	  if (blk->inHead && blk->inVariable && strcmp(el,"variable") == 0)
-	    {
-	      blk->inVariable = FALSE;
-	      return;
-	    }
-	  else if(blk->inHead && !blk->inVariable && strcmp(el,"head") == 0)
-	    {
-	      blk->inHead = FALSE;
-	      blk->doneVariableList = TRUE;
-	      return;
-	    }
-	  else //not in <head>
-	    {
-	      parseM3_setQuitParse(&blk->c, ss_ParsingError);
-	      return;
-	    }
-	}
-
-      //doing required bindings
-      //first, internal check..
-      if (blk->inResult && (*blk->results==NULL || g_slist_length((GSList*)(*blk->results)->data) != g_slist_length(*blk->selectedVariables)))
-	{
-	  whiteboard_log_debug("internal error, results table improperly initialized");
-	  parseM3_setQuitParse(&blk->c, ss_InternalError);
-	  return;
-	}
-      if (blk->inResults)
-	if(blk->inResult && blk->inBinding && blk->parsedCharTxt!=NULL && (strcmp(el,"uri")==0 || strcmp(el,"literal")==0))
-	  { //binding has been defined for defined triple element value
-	    //so, add a triple element to the internal triple element list (=results, here) and
-	    //update (overwrite NULL), for the current (blk->valueIndex) variable's value with the current (last on list) triple address
-	    ssPathNode_t *pN = g_new0(ssPathNode_t, 1);
-	    if (strcmp(el,"uri")==0)
-	      {
-		pN->nodeType = ssElement_TYPE_URI;
-		//someday, in a perfect world, the sib may use namespace forms.. 
-		//they are independent of the user's namespace, and URIs should be expanded to full form before collapsing in the user's namespace.
-		//for now, URIs are assumed already in full form.
-
-		//translate, if needed, to user namespace form
-		if (blk->usrs_prefix_ns_map) {
-		  nsLocal2prefix_ctrlBlk nsLocal2prefix_ctrl;
-		  nsLocal2prefix_ctrl.uri_p = &blk->parsedCharTxt;
-		  nsLocal2prefix_ctrl.done = FALSE;
-		  g_hash_table_foreach(blk->usrs_prefix_ns_map, nsLocal2prefixLocal_hndl, &nsLocal2prefix_ctrl);
-		}
-		pN->string = blk->parsedCharTxt;
-	      }
-	    else //"literal"
-	      {
-		pN->nodeType = ssElement_TYPE_LIT;
-		pN->string = blk->parsedCharTxt;
-	      }
-
-	    GSList *l = *blk->results;//last pushed (prepended) row
-	    gint i;
-	    for (i=0, l = l->data; // column list
-		 i<blk->valueIndex && l;
-		 i++, l=l->next);
-	    if(!l || l->data != NULL) {
-	      parseM3_setQuitParse(&blk->c, ss_InternalError);
-	      return;
-	    }
-	    l->data = pN;
-	    blk->parsedCharTxt = NULL;
-	    blk->valueIndex = -1;
-	    return;
-	  }
-	else if(blk->inResult && blk->inBinding && strcmp(el,"binding")==0)
-	  {
-	    blk->inBinding = FALSE;
-	    return;
-	  }
-	else if(blk->inResult && strcmp(el,"result")==0)
-	  {
-	    blk->inResult = FALSE;
-	    return;
-	  }
-	else if(strcmp(el,"results")==0)
-	  {
-	    blk->inResults = FALSE;
-	    return;
-	  }
-	else
-	  {
-	    parseM3_setQuitParse(&blk->c, ss_ParsingError);
-	    return;
-	  }
-
-      if( strcmp(el,"sparql_results")==0)
-	{
-	  blk->inBindingsList = FALSE;
-	  return;
-	}
-      else
-	{
-	  parseM3_setQuitParse(&blk->c, ss_ParsingError);
-	  return;
-	}
+      if (blk->inHead && blk->inVariable && strcmp(el,"variable") == 0)
+      {
+	 blk->inVariable = FALSE;
+	 return;
+      }
+      else if(blk->inHead && !blk->inVariable && strcmp(el,"head") == 0)
+      {
+        blk->inHead = FALSE;
+	blk->doneVariableList = TRUE;
+	return;
+      }
+      else //not in <head>
+      {
+	 parseM3_setQuitParse(&blk->c, ss_ParsingError);
+	 return;
+      }
     }
+
+    //doing required bindings
+    //first, internal check..
+    if (blk->inResult && (*blk->results==NULL || g_slist_length((GSList*)(*blk->results)->data) != g_slist_length(*blk->selectedVariables)))
+    {
+      whiteboard_log_debug("internal error, results table improperly initialized");
+      parseM3_setQuitParse(&blk->c, ss_InternalError);
+      return;
+    }
+    if (blk->inResults)
+    {
+      if(blk->inResult && blk->inBinding && blk->parsedCharTxt!=NULL && (strcmp(el,"uri")==0 || strcmp(el,"literal")==0))
+      { //binding has been defined for defined triple element value
+	//so, add a triple element to the internal triple element list (=results, here) and
+	//update (overwrite NULL), for the current (blk->valueIndex) variable's value with the current (last on list) triple address
+	ssPathNode_t *pN = g_new0(ssPathNode_t, 1);
+	if (strcmp(el,"uri")==0)
+	{
+	  pN->nodeType = ssElement_TYPE_URI;
+	  //someday, in a perfect world, the sib may use namespace forms.. 
+	  //they are independent of the user's namespace, and URIs should be expanded to full form before collapsing in the user's namespace.
+	  //for now, URIs are assumed already in full form.
+
+	  //translate, if needed, to user namespace form
+	  if (blk->usrs_prefix_ns_map) 
+          {
+	    nsLocal2prefix_ctrlBlk nsLocal2prefix_ctrl;
+	    nsLocal2prefix_ctrl.uri_p = &blk->parsedCharTxt;
+	    nsLocal2prefix_ctrl.done = FALSE;
+	    g_hash_table_foreach(blk->usrs_prefix_ns_map, nsLocal2prefixLocal_hndl, &nsLocal2prefix_ctrl);
+	  }
+	  pN->string = (ssElement_t) blk->parsedCharTxt;
+        }
+	else //"literal"
+	{
+	  pN->nodeType = ssElement_TYPE_LIT;
+	  pN->string = (ssElement_t) blk->parsedCharTxt;
+	}
+
+	GSList *l = *blk->results;//last pushed (prepended) row
+	gint i;
+	for (i=0, l = l->data; // column list
+	     i<blk->valueIndex && l;
+	     i++, l=l->next);
+	  if(!l || l->data != NULL) {
+	    parseM3_setQuitParse(&blk->c, ss_InternalError);
+	    return;
+	  }
+	  l->data = pN;
+	  blk->parsedCharTxt = NULL;
+	  blk->valueIndex = -1;
+	  return;
+      }
+      else if(blk->inResult && blk->inBinding && strcmp(el,"binding")==0)
+      {
+        blk->inBinding = FALSE;
+	return;
+      }
+      else if(blk->inResult && strcmp(el,"result")==0)
+      {
+	blk->inResult = FALSE;
+	return;
+      }
+      else if(strcmp(el,"results")==0)
+      {
+	blk->inResults = FALSE;
+	return;
+      }
+      else
+      {
+        parseM3_setQuitParse(&blk->c, ss_ParsingError);
+	return;
+      }
+    }
+    if( strcmp(el,"sparql_results")==0)
+    {
+      blk->inBindingsList = FALSE;
+      return;
+    }
+    else
+    {
+      parseM3_setQuitParse(&blk->c, ss_ParsingError);
+      return;
+    }
+  }
 
   parseM3_setQuitParse(&blk->c, ss_InternalError);
   return;
@@ -2036,7 +2052,7 @@ elementSPARQLSelect_end (void *data, const char *el)
   whiteboard_log_debug_fe();
 }
 
-ssStatus_t parseM3_query_results_sparql_select(GSList **selectedVariables, GSList **results, const gchar * response, const GHashTable *prefix_ns_map)
+ssStatus_t parseM3_query_results_sparql_select(GSList **selectedVariables, GSList **results, const gchar * response, /*const*/ GHashTable *prefix_ns_map)
 {
   whiteboard_log_debug_fb();
   ParseSparqlSelectBlk blk;
@@ -2046,7 +2062,7 @@ ssStatus_t parseM3_query_results_sparql_select(GSList **selectedVariables, GSLis
 
   blk.selectedVariables = selectedVariables;
   blk.results = results;
-  blk.usrs_prefix_ns_map = prefix_ns_map;
+  blk.usrs_prefix_ns_map = prefix_ns_map; // TODO SMART-11
   blk.parsedCharTxt = NULL;
   blk.inBindingsList = FALSE;
   blk.inBinding = FALSE;
@@ -2209,17 +2225,17 @@ charhndl(void *data, const char *s, int sLen)
     return;
 
   //#if PRINT_TRACE
-  int i;
+  //int i;
   //fprintf(stderr,"depth: %d, len: %d, s: ", blk->depth, sLen);
   //for (i = 0; i < sLen; i++)
     //fprintf (stderr,"%c", s[i]);
   //fprintf(stderr,"\n");
   //#endif
-  gchar* tmp_str;
+  //gchar* tmp_str;
   if( *blk->tripleComponentToParse )
     {
       //printf("appending to current component string\n");
-      gchar *old = (*blk->tripleComponentToParse);
+      gchar *old = (gchar *) (*blk->tripleComponentToParse);
       gchar *new = fullUri(s, sLen, blk->sibs_prefix_ns_map);
       *blk->tripleComponentToParse = (ssElement_t)g_strconcat( old, new, NULL);
       g_free(old);

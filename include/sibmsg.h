@@ -281,7 +281,7 @@ ssStatus_t parseM3_triples_SIB(GSList ** list_pp,
 #ifdef SIBUSER_ROLE
 ssStatus_t parseM3_query_cnf_wql(GSList **results, const gchar *response);
 
-ssStatus_t parseM3_query_results_sparql_select(GSList **selectedVariables, GSList **valRows, const gchar *resultXML, const GHashTable *prefix_ns_map);
+ssStatus_t parseM3_query_results_sparql_select(GSList **selectedVariables, GSList **valRows, const gchar *resultXML, /*const*/ GHashTable *prefix_ns_map);
 #endif /* SIBUSER_ROLE */
 
 #ifdef SIB_ROLE

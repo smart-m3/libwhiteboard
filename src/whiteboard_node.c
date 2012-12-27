@@ -1458,7 +1458,8 @@ gint whiteboard_node_sib_access_insert_graph(WhiteBoardNode *self,
 					     gchar *graph,
 					     EncodingType encoding)
 {
-
+	// SMART--11
+	return 0;
 }
 
 
@@ -1954,8 +1955,9 @@ ssStatus_t whiteboard_node_sib_access_query_sparql_select(WhiteBoardNode *self,
     }
   else
     {
-      GSList *l = select;
-      ssTriple_t *t;
+	// SMART-11
+      //GSList *l = select;
+      //ssTriple_t *t;
       ssStatus_t status;
 
       //initializing status//
@@ -2009,7 +2011,7 @@ ssStatus_t whiteboard_node_sib_access_query_sparql_select(WhiteBoardNode *self,
 	      whiteboard_log_debug("Got query access_id:%d\n", access_id);
 	      SubscriptionData *sd = NULL;
 	      sd = g_new0(SubscriptionData, 1);
-	      sd->cb.q_template = cb;
+	      sd->cb.q_template = (WhiteBoardNodeQueryTemplateCB) cb;
 	      sd->prefix_ns_map = prefix_ns_map;
 	      sd->user_data = data;
 	      sd->type = type;
