@@ -7,7 +7,7 @@ License: GPLv3
 URL: https://github.com/smart-m3/
 Source0: libwhiteboard-1.0.tar.bz2
 BuildRoot: %{_tmppath}/libwhiteboard-root
-BuildRequires: libuuid, expat
+Requires: libuuid, expat
 
 
 %description
@@ -27,6 +27,9 @@ make DESTDIR=$RPM_BUILD_ROOT install
 make clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+echo /usr/local/lib >> /etc/ld.so.conf
+ldconfig
 
 %files
 %defattr(-, root, root)
