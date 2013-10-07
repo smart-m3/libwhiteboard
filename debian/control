@@ -2,7 +2,7 @@ Source: libwhiteboard
 Priority: optional
 Section: user/libs
 Maintainer: Hannu Laine <hannu.e.laine@nokia.com>
-Build-Depends: debhelper (>= 4.0.0), uuid-dev, libexpat1-dev
+Build-Depends: debhelper (>= 4.0.0), uuid-dev, libexpat1-dev, pkg-config
 Standards-Version: 3.6.0
 
 Package: libwhiteboard-dev
