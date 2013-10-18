@@ -13,11 +13,11 @@ INCOMING=${SSH_STRING}:/opt/smart-m3-repo/incoming_${SUBREPO}
 echo "# Package deploying info:"
 echo " - Incoming folder: ${INCOMING}"
 echo " - Build atrifacts list -"
-pwd
-ls -la ../
+
+ls -la .
 
 
-#scp ../geo2tag-*.deb ../geo2tag-*.changes ../geo2tag-*.dsc ${INCOMING}/
+#scp geo2tag-*.deb geo2tag-*.changes geo2tag-*.dsc ${INCOMING}/
 
 
 exit 0
