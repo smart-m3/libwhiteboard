@@ -9,11 +9,10 @@ Package: libwhiteboard-dev
 Architecture: any
 Section: devel
 Depends: libwhiteboard
-Description: WhiteBoard development packege
+Description: WhiteBoard development package
 
 Package: libwhiteboard
 Architecture: any
 Section: user/libs
 Depends: libuuid1, libexpat1
 Description: WhiteBoard helper library for C development.
-
